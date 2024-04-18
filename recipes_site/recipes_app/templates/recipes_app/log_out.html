@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <form method="post" class="justify-content-center form-check">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Выход</button>
+    </form>
+</div>
+{% endblock %}
