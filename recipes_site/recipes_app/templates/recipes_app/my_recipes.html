@@ -4,16 +4,15 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <div class="row justify-content-center">
+    <h3>Мои рецепты</h3>
     {% for item in recipes_list %}
-    <div class="col-6">
+    <div class="col-6 justify-content-center">
         <h4>{{ item.title }}</h4>
         <img class="img-fluid" src="{{ item.photo.url }}" alt="{{ item.title }}">
         <h5>Время приготовления: {{ item.cooking_time }} мин.</h5>
         <p><em>{{ item.description }}</em></p>
-        <a href="{% url 'recipe_page' item.id %}">Открыть</a>
+        <a href="{% url 'recipe_page'  item.id  %}">Открыть</a>
     </div>
     {% endfor %}
-    </div>
 </div>
 {% endblock %}

@@ -4,22 +4,26 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <h1>{{ item.title }}</h1>
+    <h1>{{ recipe.title }}</h1>
+    <h5>Время приготовления: {{ recipe.cooking_time }} мин.</h5>
     <div class="row">
         <div class="col-6">
             <img class="img-fluid" src="{{ item.photo.url }}" alt="{{ item.title }}">
         </div>
         <div class="col-6">
-        <p>{{ item.description }}</p>
+        <p>{{ recipe.description }}</p>
         </div>
         <figure>
-            <blockquote class="blockquote">
-                <p>{{ item.steps }}</p>
+            <blockquote class="blockquote border-1">
+                <p>{{ recipe.steps }}</p>
             </blockquote>
             <figcaption class="blockquote-footer">
-                {{ item.author.name }}
+                {{ recipe.author.name }}
             </figcaption>
         </figure>
+        {% if is_author %}
+        <a href="{% url 'edit_recipe' recipe.id %}">Редактировать</a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

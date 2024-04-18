@@ -8,7 +8,7 @@ class Recipe(models.Model):
     description = models.TextField(max_length=800)
     steps = models.TextField(max_length=2000)
     cooking_time = models.IntegerField()
-    photo = models.ImageField(upload_to='recipes_photos/')
+    photo = models.ImageField(upload_to='recipes_photos/', blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

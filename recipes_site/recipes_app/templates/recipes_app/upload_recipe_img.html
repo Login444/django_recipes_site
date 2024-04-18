@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ title }}
+{% endblock %}
+{% block content %}
+<h3>Загрузите изображение</h3>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit" class="btn btn-primary">Загрузить</button>
+</form>
+{% endblock %}

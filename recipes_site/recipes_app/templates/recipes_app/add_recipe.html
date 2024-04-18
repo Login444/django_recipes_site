@@ -4,10 +4,10 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <form action="" method="post" class="form-check-input">
+    <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
-        <button type="submit" class="btn btn-primary">Опубликовать</button>
+        <button type="submit" class="btn btn-primary">Далее</button>
     </form>
 </div>
 {% endblock %}

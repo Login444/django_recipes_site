@@ -7,10 +7,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" type="text/css">
 </head>
-<body>
+<body class="container-md">
+<header>
+    <ul class="nav justify-content-center">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Главная</a>
+        </li>
+        {% if is_authenticated != True %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'registration' %}">Зарегистрироваться</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'log_in' %}">Войти</a>
+        </li>
+        {% endif %}
+        {% if is_authenticated == True %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'add_recipe' %}">Добавить свой рецепт</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'my_recipes' %}">Мои рецепты</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'log_out' %}">Выйти</a>
+        </li>
+        {% endif %}
+    </ul>
+</header>
 {% block content%}
 {% endblock %}
 <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 </body>
-<footer>2024&copy; Birukov</footer>
+<footer class="row justify-content-center align-bottom">2024&copy; Birukov</footer>
 </html>
