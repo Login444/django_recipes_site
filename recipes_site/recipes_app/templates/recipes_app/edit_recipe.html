@@ -9,7 +9,7 @@
             <h4>Название: </h4>
             {{ recipe.title }}
             <h4>Категория: </h4>
-            {{ recipe_category.category.title }}
+            {{ current_category.category.title }}
             <h4>Краткое описание: </h4>
             {{ recipe.description }}
             <h4>Шаги приготовления: </h4>
@@ -20,7 +20,7 @@
             <img class="img-fluid" src="{{ recipe.photo.url }}" alt="{{ recipe.title }}">
         </div>
         <div class="col-6">
-            <form action="" method="post">
+            <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form }}
                 <button type="submit" class="btn btn-primary justify-content-center">Сохранить</button>

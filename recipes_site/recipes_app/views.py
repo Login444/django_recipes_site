@@ -4,14 +4,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .forms import RegistrationForm, LoginForm, AddRecipeForm, EditRecipeForm, UploadRecipeImageForm
-from .models import Recipe, Categories
+from .models import Recipe, Categories, RecipeCategory
 from django.core.files.storage import FileSystemStorage
 
 
 # Create your views here.
 def home(request):
-    recipes_list = Recipe.objects.all()
-    context = {'recipes_list': recipes_list, 'title': 'Home'}
+    random_recipes = Recipe.objects.order_by('?')[:5]
+    context = {'recipes_list': random_recipes, 'title': 'Home'}
     if request.user.is_authenticated:
         context['is_authenticated'] = True
     return render(request, 'recipes_app/home.html', context)
@@ -31,19 +31,19 @@ def add_recipe(request):
     if request.method == 'POST':
         form = AddRecipeForm(request.POST, request.FILES)
         if form.is_valid():
-            recipe_title = form.cleaned_data['recipe_title']
-            recipe_category = form.cleaned_data['recipe_category']
-            recipe_description = form.cleaned_data['recipe_description']
-            recipe_steps = form.cleaned_data['recipe_steps']
-            recipe_cooking_time = form.cleaned_data['recipe_cooking_time']
-            new_recipe = Recipe(title=recipe_title,
-                                description=recipe_description, steps=recipe_steps,
-                                cooking_time=recipe_cooking_time,
+            title = form.cleaned_data['recipe_title']
+            category = form.cleaned_data['recipe_category']
+            description = form.cleaned_data['recipe_description']
+            steps = form.cleaned_data['recipe_steps']
+            cooking_time = form.cleaned_data['recipe_cooking_time']
+            new_recipe = Recipe(title=title,
+                                description=description, steps=steps,
+                                cooking_time=cooking_time,
                                 author=request.user)
-            category = Categories.objects.filter(pk=recipe_category)
-            category.recipe.add(new_recipe)
-            category.save()
+            category_instance = Categories.objects.filter(pk=category).first()
+            recipe_category = RecipeCategory(category=category_instance, recipe=new_recipe)
             new_recipe.save()
+            recipe_category.save()
             return redirect('upload_image', recipe_id=new_recipe.id)
     else:
         form = AddRecipeForm()
@@ -61,7 +61,7 @@ def upload_image(request, recipe_id):
             recipe.save()
             file = FileSystemStorage()
             file.save(name=image.name, content=image)
-            return render(request, 'recipes_app/recipe_page.html', {'recipe': recipe})
+            return render(request, 'recipes_app/recipe_page.html', {'recipe': recipe, 'is_authenticated': True})
     else:
         form = UploadRecipeImageForm()
         context = {'form': form, 'title': 'Загрузка изображения', 'is_authenticated': True}
@@ -77,22 +77,30 @@ def edit_recipe(request, recipe_id):
             recipe_description = form.cleaned_data['recipe_description']
             recipe_steps = form.cleaned_data['recipe_steps']
             recipe_cooking_time = form.cleaned_data['recipe_cooking_time']
-            recipe_photo = form.cleaned_data['recipe_photo']
             recipe = Recipe.objects.get(pk=recipe_id)
-            recipe.recipe_title = recipe_title
-            recipe.recipe_category = recipe_category
-            recipe.recipe_description = recipe_description
-            recipe.recipe_steps = recipe_steps
-            recipe.recipe_cooking_time = recipe_cooking_time
-            recipe.recipe_photo = recipe_photo
+            if recipe_title != '':
+                recipe.title = recipe_title
+            if recipe_description != '':
+                recipe.description = recipe_description
+            if recipe_steps != '':
+                recipe.steps = recipe_steps
+            if recipe_cooking_time is not None:
+                recipe.cooking_time = recipe_cooking_time
             recipe.save()
-            file = FileSystemStorage()
-            file.save(recipe_photo.name, recipe_photo)
-            return render(request, 'recipes_app/recipe_page.html', {'recipe': recipe})
+            category_instance = Categories.objects.filter(pk=recipe_category).first()
+            current_category = RecipeCategory.objects.get(recipe=recipe_id)
+            if category_instance != current_category.category:
+                previous_category = RecipeCategory.objects.filter(recipe=recipe_id).first()
+                previous_category.delete()
+                category = RecipeCategory(category=category_instance, recipe=recipe)
+                category.save()
+            return redirect('upload_image', recipe_id=recipe_id)
     else:
         recipe = Recipe.objects.get(pk=recipe_id)
+        current_category = RecipeCategory.objects.get(recipe=recipe_id)
         form = EditRecipeForm()
-        context = {'form': form, 'title': 'Редактирование', 'is_authenticated': True, 'recipe': recipe}
+        context = {'form': form, 'title': 'Редактирование', 'is_authenticated': True, 'recipe': recipe,
+                   'current_category': current_category}
         return render(request, 'recipes_app/edit_recipe.html', context)
 
 
@@ -165,7 +173,10 @@ def categories_view(request):
 
 
 def category_recipes(request, category_id):
-    recipes = Recipe.objects.filter(category=category_id)
+    recipes_list = RecipeCategory.objects.filter(category=category_id)
+    recipes = []
+    for item in recipes_list:
+        recipes.append(item.recipe)
     title = Categories.objects.get(pk=category_id).title
     context = {'recipes_list': recipes, 'title': title}
     if request.user.is_authenticated:

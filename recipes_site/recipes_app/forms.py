@@ -29,10 +29,9 @@ class AddRecipeForm(forms.Form):
     @staticmethod
     def category_choices():
         categories = Categories.objects.all()
-        print(categories)
         choices_list = []
         for category in categories:
-            res_tuple = (category.pk, category.title)
+            res_tuple = (category.id, category.title)
             choices_list.append(res_tuple)
         return choices_list
 
@@ -58,7 +57,8 @@ class EditRecipeForm(forms.Form):
         categories = Categories.objects.all()
         choices_list = []
         for category in categories:
-            choices_list.append((category.pk, category.title))
+            res_tuple = (category.id, category.title)
+            choices_list.append(res_tuple)
         return choices_list
 
     recipe_title = forms.CharField(label='Название', max_length=150, required=False,
@@ -71,5 +71,3 @@ class EditRecipeForm(forms.Form):
                                    widget=forms.Textarea(attrs={'class': 'form-control'}))
     recipe_cooking_time = forms.IntegerField(label='Время приготовления (в минутах)', min_value=1, required=False,
                                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    recipe_photo = forms.ImageField(label='Загрузите изображение', required=False,
-                                    widget=forms.FileInput(attrs={'class': 'form-control'}))
