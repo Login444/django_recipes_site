@@ -1,56 +1,75 @@
 from django import forms
 
-from .models import RecipeCategory
+from .models import Categories
 
 
 class RegistrationForm(forms.Form):
-    user_name = forms.CharField(label='Your name', max_length=150,
+    user_name = forms.CharField(label='Имя пользователя (Ваш Логин)', max_length=150,
                                 widget=forms.TextInput(attrs={'class': 'form-control'}))
-    first_name = forms.CharField(label='First Name', max_length=150,
+    first_name = forms.CharField(label='Имя', max_length=150,
                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(label='Last Name', max_length=150,
+    last_name = forms.CharField(label='Фамилия', max_length=150,
                                 widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(label='Email Address',
+    email = forms.EmailField(label='Адрес электронной почты',
                              widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(label='Password', max_length=100,
+    password = forms.CharField(label='Придумайте пароль', max_length=100,
                                widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    confirm_password = forms.CharField(label='Confirm Password', max_length=100,
+    confirm_password = forms.CharField(label='Повторите пароль', max_length=100,
                                        widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
 class LoginForm(forms.Form):
-    user_name = forms.CharField(label='Your name', max_length=150,
+    user_name = forms.CharField(label='Ваш Логин', max_length=150,
                                 widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(label='Password', max_length=100,
+    password = forms.CharField(label='Ваш пароль', max_length=100,
                                widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
 class AddRecipeForm(forms.Form):
-    recipe_title = forms.CharField(label='Recipe title', max_length=150,
+    @staticmethod
+    def category_choices():
+        categories = Categories.objects.all()
+        print(categories)
+        choices_list = []
+        for category in categories:
+            res_tuple = (category.pk, category.title)
+            choices_list.append(res_tuple)
+        return choices_list
+
+    recipe_title = forms.CharField(label='Название', max_length=150,
                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
-    recipe_category = forms.CharField(label='Recipe title', max_length=150,
-                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
-    recipe_description = forms.CharField(label='Recipe description', max_length=800,
+    recipe_category = forms.ChoiceField(label='Категория', choices=category_choices(),
+                                        widget=forms.Select(attrs={'class': 'form-control'}))
+    recipe_description = forms.CharField(label='Краткое описание', max_length=800,
                                          widget=forms.Textarea(attrs={'class': 'form-control'}))
-    recipe_steps = forms.CharField(label='Recipe steps', max_length=2000,
+    recipe_steps = forms.CharField(label='Шаги приготовления', max_length=2000,
                                    widget=forms.Textarea(attrs={'class': 'form-control'}))
-    recipe_cooking_time = forms.IntegerField(label='Recipe cooking time', min_value=1,
+    recipe_cooking_time = forms.IntegerField(label='Время приготовления (в минутах)', min_value=1,
                                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
 
 class UploadRecipeImageForm(forms.Form):
-    image = forms.ImageField(label='Upload image', required=False)
-
+    image = forms.ImageField(label='Загрузите изображение', widget=forms.FileInput(attrs={'class': 'form-control'}))
 
 
 class EditRecipeForm(forms.Form):
-    recipe_title = forms.CharField(label='Recipe title', max_length=150,
+    @staticmethod
+    def category_choices():
+        categories = Categories.objects.all()
+        choices_list = []
+        for category in categories:
+            choices_list.append((category.pk, category.title))
+        return choices_list
+
+    recipe_title = forms.CharField(label='Название', max_length=150, required=False,
                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
-    recipe_description = forms.CharField(label='Recipe description', max_length=800,
+    recipe_category = forms.ChoiceField(label='Категория', choices=category_choices(),
+                                        widget=forms.Select(attrs={'class': 'form-control'}))
+    recipe_description = forms.CharField(label='Краткое описание', max_length=800, required=False,
                                          widget=forms.Textarea(attrs={'class': 'form-control'}))
-    recipe_steps = forms.CharField(label='Recipe steps', max_length=2000,
+    recipe_steps = forms.CharField(label='Шаги приготовления', max_length=2000, required=False,
                                    widget=forms.Textarea(attrs={'class': 'form-control'}))
-    recipe_cooking_time = forms.IntegerField(label='Recipe cooking time', min_value=1,
+    recipe_cooking_time = forms.IntegerField(label='Время приготовления (в минутах)', min_value=1, required=False,
                                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    recipe_photo = forms.ImageField(label='Recipe photo', required=False,
+    recipe_photo = forms.ImageField(label='Загрузите изображение', required=False,
                                     widget=forms.FileInput(attrs={'class': 'form-control'}))

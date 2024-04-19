@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -11,4 +13,6 @@ urlpatterns = [
     path('registration/', views.registration, name='registration'),
     path('upload_image/<int:recipe_id>', views.upload_image, name='upload_image'),
     path('my_recipes/', views.my_recipes, name='my_recipes'),
-]
+    path('categories/', views.categories_view, name='categories'),
+    path('category_recipes/<int:category_id>', views.category_recipes, name='category_recipes'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -4,10 +4,29 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit" class="btn btn-primary justify-content-center">Сохранить</button>
-    </form>
+    <div class="row">
+        <div class="col-6">
+            <h4>Название: </h4>
+            {{ recipe.title }}
+            <h4>Категория: </h4>
+            {{ recipe_category.category.title }}
+            <h4>Краткое описание: </h4>
+            {{ recipe.description }}
+            <h4>Шаги приготовления: </h4>
+            {{ recipe.steps }}
+            <h4>Время приготовления: </h4>
+            {{ recipe.cooking_time }}
+            <h4>Фотография: </h4>
+            <img class="img-fluid" src="{{ recipe.photo.url }}" alt="{{ recipe.title }}">
+        </div>
+        <div class="col-6">
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="btn btn-primary justify-content-center">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

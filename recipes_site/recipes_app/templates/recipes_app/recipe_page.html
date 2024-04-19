@@ -5,10 +5,11 @@
 {% block content %}
 <div class="container-fluid">
     <h1>{{ recipe.title }}</h1>
+    <h3>{{ recipe.category }}</h3>
     <h5>Время приготовления: {{ recipe.cooking_time }} мин.</h5>
-    <div class="row">
+    <div class="row justify-content-center">
         <div class="col-6">
-            <img class="img-fluid" src="{{ item.photo.url }}" alt="{{ item.title }}">
+            <img class="img-fluid" src="{{ recipe.photo.url }}" alt="{{ recipe.title }}">
         </div>
         <div class="col-6">
         <p>{{ recipe.description }}</p>
@@ -18,7 +19,7 @@
                 <p>{{ recipe.steps }}</p>
             </blockquote>
             <figcaption class="blockquote-footer">
-                {{ recipe.author.name }}
+                {{ recipe.author.first_name }}
             </figcaption>
         </figure>
         {% if is_author %}
